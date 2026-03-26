@@ -59,6 +59,13 @@
       text-transform:uppercase;
       color:var(--green);
     }
+    .authors {
+      margin-top: 14px;
+      font-family: var(--mono);
+      font-size: 13px;
+      letter-spacing: 0.08em;
+      color: var(--muted);
+    }
     .brand-bottom{
       font-size:14px;
       color:var(--muted);
@@ -321,8 +328,11 @@
           <span class="highlight-blue">Traversal</span> for Accelerated Ray Tracing
         </h1>
         <p>
-          A project website for our 15-618 work focused on Bounding Volume Hierarchies as the main parallel systems problem, with ray tracing used as the motivating workload and evaluation framework.
+          A project website for our 15-618 work which focuses on Bounding Volume Hierarchies (BVHs) with ray tracing used as the baseline for analyzing and evaluation.
         </p>
+        <div class="authors">
+          Soham Narendra Joshi · Viren Dodia
+        </div>
         <div class="hero-actions">
           <a class="btn btn-primary" href="proposal.html">Open Project Proposal</a>
           <a class="btn btn-secondary" href="#overview">See Overview</a>
@@ -350,7 +360,7 @@
             <line x1="0" y1="186" x2="260" y2="238" stroke="rgba(255,213,106,0.52)" stroke-width="3"/>
           </svg>
           <div class="visual-caption">
-            Rays enter the scene, BVH culls empty space, and traversal narrows the search to likely intersections.
+            Rays enter the scene, BVH culls empty space, and traversal narrows the search for intersections.
           </div>
         </div>
       </div>
@@ -362,49 +372,24 @@
       <div class="section-title">Overview</div>
       <h2>What this project is about</h2>
       <p class="section-intro">
-        The project studies parallel BVH construction and efficient BVH traversal across sequential CPU, OpenMP multi-core CPU, and CUDA GPU implementations, using ray tracing scenes of increasing complexity to analyze build time, traversal time, load balancing, and memory behavior.
+        In order to analyze build time, traversal time, load balancing and memory behavior the project focuses parallel BVH construction as well as efficient BVH traversal across sequential CPU, OpenMP multi-core CPU and CUDA GPU implemntations using ray tracing sceness of increasing complexity.
       </p>
 
       <div class="grid-3">
         <div class="card">
           <div class="card-label">Core Focus</div>
           <h3>BVH first</h3>
-          <p>Bounding Volume Hierarchies are the main systems problem. Ray tracing is there to evaluate how good the structure and traversal actually are.</p>
+          <p>We are trying to parallelize the construction and traversal of Bounding Volume Hierarchies to improve ray tracing performance. Ray tracing is to evaluate how BVH helps improve the performance.</p>
         </div>
         <div class="card">
           <div class="card-label">Parallel Models</div>
           <h3>CPU and GPU</h3>
-          <p>We compare sequential CPU, OpenMP multi-core CPU, and CUDA GPU implementations to study how different execution models handle irregular workloads.</p>
+          <p>We examine how various execution models manage workloads by comparing sequential CPU, OpenMP multi-core CPU, and CUDA GPU implementations.</p>
         </div>
         <div class="card">
           <div class="card-label">Main Questions</div>
           <h3>Speed, scaling, behavior</h3>
-          <p>We care about BVH construction, traversal efficiency, divergence, memory access patterns, and the tradeoffs between build cost and overall rendering performance.</p>
-        </div>
-      </div>
-    </div>
-  </section>
-
-  <section class="section">
-    <div class="container">
-      <div class="section-title">Pages</div>
-      <h2>Current site pages</h2>
-      <p class="section-intro">
-        For now, the site focuses on the polished landing page and the full proposal page. Additional pages can be added later in the same style.
-      </p>
-
-      <div class="links-grid">
-        <div class="link-card">
-          <div class="mini">Page 01</div>
-          <h3>Home</h3>
-          <p>Main overview page with project framing, visual identity, and quick navigation.</p>
-          <a href="index.html">You are here</a>
-        </div>
-        <div class="link-card">
-          <div class="mini">Page 02</div>
-          <h3>Project Proposal</h3>
-          <p>Proposal content based directly on your writeup, with the same wording and structure carried into a cleaner web layout.</p>
-          <a href="proposal.html">Open Proposal</a>
+          <p>BVH constrution, traversal efficiency, divergence, memory access ptterns, and the tradeoffs between build cost and overall rendering performance.</p>
         </div>
       </div>
     </div>
@@ -412,7 +397,7 @@
 
   <footer>
     <div class="container">
-      Soham Narendra Joshi · Viren Dodia · CMU 15-618 Project Website
+      Soham Narendra Joshi · Viren Dodia · CMU 15-618 Project
     </div>
   </footer>
 </body>

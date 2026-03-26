@@ -198,6 +198,15 @@
     @media (max-width: 780px){
       .two-col{grid-template-columns:1fr}
     }
+    #references a {
+      color: var(--blue);
+      font-size: 13px;
+      word-break: break-all;
+    }
+
+    #references a:hover {
+      text-decoration: underline;
+    }
   </style>
 </head>
 <body>
@@ -222,23 +231,14 @@
   <header class="hero">
     <div class="container">
       <div class="top-kicker">15618 Spring 26</div>
-      <h1>Parallel BVH Construction and Traversal for Accelerated Ray Tracing</h1>
+      <h1>Project Proposal: Parallel BVH Construction and Traversal for Accelerated Ray Tracing</h1>
       <div class="meta">
-        Project Proposal<br>
+        <br>
         Names: Soham Narendra Joshi, Viren Dodia<br>
         Andrew IDs: sohamnaj, vdodia
       </div>
 
-      <div class="toc">
-        <a href="#summary">Summary</a>
-        <a href="#background">Background</a>
-        <a href="#challenges">Challenges</a>
-        <a href="#resources">Resources</a>
-        <a href="#goals">Goals & Deliverables</a>
-        <a href="#platform">Platform Choice</a>
-        <a href="#schedule">Schedule</a>
-        <a href="#references">References</a>
-      </div>
+    
     </div>
   </header>
 
@@ -411,10 +411,33 @@
         <div class="section-title">References</div>
         <p>Here are some general references which we found to understand BVH and ray tracing:</p>
         <ul>
-          <li>[1] P. Shirley, Ray Tracing in One Weekend, 2016.</li>
-          <li>[2] M. Pharr, W. Jakob, and G. Humphreys, Physically Based Rendering: From Theory to Implementation, 3rd ed., Morgan Kaufmann, 2016.</li>
-          <li>[3] T. Karras, “Maximizing Parallelism in the Construction of BVHs, Octrees, and k-d Trees,” in Proceedings of High Performance Graphics (HPG), 2012.</li>
-          <li>[4] T. Karras and T. Aila, “Fast Parallel Construction of High-Quality Bounding Volume Hierarchies,” in Proceedings of High Performance Graphics (HPG), 2013.</li>
+          <li>
+            [1] P. Shirley, Ray Tracing in One Weekend, 2016. <br>
+            <a href="https://raytracing.github.io/books/RayTracingInOneWeekend.html" target="_blank">
+              https://raytracing.github.io/books/RayTracingInOneWeekend.html
+            </a>
+          </li>
+
+          <li>
+            [2] M. Pharr, W. Jakob, and G. Humphreys, Physically Based Rendering: From Theory to Implementation, 3rd ed., Morgan Kaufmann, 2016. <br>
+            <a href="https://cw.fel.cvut.cz/b221/_media/courses/b4m39rso/lectures/physically_based_rendering_third_edition.pdf" target="_blank">
+              https://cw.fel.cvut.cz/b221/_media/courses/b4m39rso/lectures/physically_based_rendering_third_edition.pdf
+            </a>
+          </li>
+
+          <li>
+            [3] T. Karras, “Maximizing Parallelism in the Construction of BVHs, Octrees, and k-d Trees,” in Proceedings of High Performance Graphics (HPG), 2012. <br>
+            <a href="https://research.nvidia.com/sites/default/files/pubs/2012-06_Maximizing-Parallelism-in/karras2012hpg_paper.pdf" target="_blank">
+              https://research.nvidia.com/sites/default/files/pubs/2012-06_Maximizing-Parallelism-in/karras2012hpg_paper.pdf
+            </a>
+          </li>
+
+          <li>
+            [4] T. Karras and T. Aila, “Fast Parallel Construction of High-Quality Bounding Volume Hierarchies,” in Proceedings of High Performance Graphics (HPG), 2013. <br>
+            <a href="https://research.nvidia.com/sites/default/files/pubs/2013-07_Fast-Parallel-Construction/karras2013hpg_paper.pdf" target="_blank">
+              https://research.nvidia.com/sites/default/files/pubs/2013-07_Fast-Parallel-Construction/karras2013hpg_paper.pdf
+            </a>
+          </li>
         </ul>
       </section>
 
