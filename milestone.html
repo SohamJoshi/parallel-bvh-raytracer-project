@@ -1,0 +1,471 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Project Milestone Report | Parallel BVH Construction and Traversal</title>
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;600&family=Inter:wght@300;400;500;600;700&display=swap');
+
+    :root{
+      --bg:#0a1017;
+      --surface:#121a24;
+      --surface-2:#101721;
+      --border:rgba(255,255,255,0.12);
+      --text:#eef4ff;
+      --muted:#aeb8ca;
+      --green:#49f2a0;
+      --blue:#58b6ff;
+      --mono:'IBM Plex Mono', monospace;
+      --sans:'Inter', sans-serif;
+    }
+
+    *{box-sizing:border-box;margin:0;padding:0}
+
+    body{
+      font-family:var(--sans);
+      background:
+        radial-gradient(circle at 15% 10%, rgba(73,242,160,0.09), transparent 24%),
+        radial-gradient(circle at 85% 8%, rgba(88,182,255,0.08), transparent 24%),
+        linear-gradient(180deg, #0a1017, #111926);
+      color:var(--text);
+      line-height:1.72;
+    }
+
+    a{color:inherit;text-decoration:none}
+    .container{width:min(980px, calc(100% - 40px));margin:0 auto}
+
+    .nav-wrap{
+      position:sticky; top:0; z-index:50;
+      backdrop-filter: blur(18px);
+      background:rgba(10,16,23,0.78);
+      border-bottom:1px solid rgba(255,255,255,0.08);
+    }
+
+    nav{
+      display:flex;
+      justify-content:space-between;
+      align-items:center;
+      padding:18px 0;
+      gap:20px;
+    }
+
+    .brand{
+      font-family:var(--mono);
+      font-size:12px;
+      text-transform:uppercase;
+      letter-spacing:.18em;
+      color:var(--green);
+    }
+
+    .nav-links{
+      display:flex;
+      gap:18px;
+      flex-wrap:wrap;
+      font-size:14px;
+      color:#dbe6ff;
+    }
+
+    .nav-links a{opacity:.82}
+    .nav-links a:hover{opacity:1;color:var(--green)}
+
+    .hero{
+      padding:58px 0 34px;
+      border-bottom:1px solid rgba(255,255,255,0.08);
+    }
+
+    .top-kicker{
+      font-family:var(--mono);
+      font-size:12px;
+      letter-spacing:.18em;
+      text-transform:uppercase;
+      color:var(--green);
+      margin-bottom:12px;
+    }
+
+    h1{
+      font-size:clamp(2.3rem, 5vw, 4rem);
+      line-height:1.08;
+      letter-spacing:-.03em;
+      margin-bottom:14px;
+    }
+
+    .meta{
+      color:var(--muted);
+      font-size:15px;
+    }
+
+    .toc{
+      margin:30px 0 10px;
+      display:flex;
+      flex-wrap:wrap;
+      gap:10px;
+    }
+
+    .toc a{
+      border:1px solid var(--border);
+      background:rgba(255,255,255,0.04);
+      border-radius:999px;
+      padding:10px 14px;
+      font-size:13px;
+      color:#dce6fa;
+    }
+
+    .toc a:hover{background:rgba(255,255,255,0.07)}
+
+    main{padding:34px 0 50px}
+
+    section{
+      margin-bottom:28px;
+      background:linear-gradient(180deg, rgba(255,255,255,0.045), rgba(255,255,255,0.03));
+      border:1px solid var(--border);
+      border-radius:26px;
+      padding:26px;
+    }
+
+    .section-title{
+      font-family:var(--mono);
+      font-size:12px;
+      letter-spacing:.2em;
+      text-transform:uppercase;
+      color:var(--green);
+      margin-bottom:16px;
+    }
+
+    p{
+      color:#dce6fa;
+      margin-bottom:14px;
+    }
+
+    ul{
+      padding-left:22px;
+      color:#dce6fa;
+      margin-top:8px;
+    }
+
+    li{margin-bottom:8px}
+
+    .schedule-grid{
+      display:grid;
+      grid-template-columns:120px 1fr 120px;
+      gap:14px 18px;
+      margin-top:8px;
+    }
+
+    .schedule-week,
+    .schedule-status{
+      font-family:var(--mono);
+      font-size:13px;
+      color:var(--green);
+    }
+
+    .schedule-status{
+      color:var(--blue);
+    }
+
+    .schedule-row{
+      display:contents;
+    }
+
+    .schedule-desc{
+      color:#dce6fa;
+    }
+
+    table{
+      width:100%;
+      border-collapse:collapse;
+      margin-top:12px;
+      font-size:14px;
+      overflow:hidden;
+      border-radius:18px;
+    }
+
+    th, td{
+      padding:14px 14px;
+      border-bottom:1px solid rgba(255,255,255,0.09);
+      vertical-align:top;
+      text-align:left;
+    }
+
+    th{
+      font-family:var(--mono);
+      font-size:12px;
+      letter-spacing:.14em;
+      text-transform:uppercase;
+      color:var(--green);
+      background:rgba(255,255,255,0.03);
+    }
+
+    tr:last-child td{border-bottom:none}
+
+    .subheading{
+      margin-top:18px;
+      margin-bottom:10px;
+      font-size:22px;
+      color:#ffffff;
+      font-weight:600;
+    }
+
+    .small-note{
+      color:var(--muted);
+      font-size:14px;
+      margin-bottom:6px;
+    }
+
+    footer{
+      padding:0 0 44px;
+      color:var(--muted);
+      font-size:14px;
+    }
+
+    @media (max-width: 820px){
+      .schedule-grid{
+        grid-template-columns:1fr;
+      }
+      .schedule-week,
+      .schedule-status{
+        margin-top:6px;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="nav-wrap">
+    <div class="container">
+      <nav>
+        <div class="brand">15-618 Milestone Report</div>
+        <div class="nav-links">
+          <a href="index.html">Home</a>
+          <a href="proposal.html">Proposal</a>
+          <a href="milestone.html">Milestone</a>
+        </div>
+      </nav>
+    </div>
+  </div>
+
+  <header class="hero">
+    <div class="container">
+      <div class="top-kicker">15618 Spring 26</div>
+      <h1>Parallel BVH Construction and Traversal for Accelerated Ray Tracing</h1>
+      <div class="meta">
+        Project Milestone Report<br>
+        Names: Soham Narendra Joshi, Viren Dodia<br>
+        Andrew IDs: sohamnaj, vdodia<br>
+      </div>
+
+    </div>
+  </header>
+
+  <main>
+    <div class="container">
+
+      <section id="work-completed">
+        <div class="section-title">Work Completed So Far</div>
+        <p>We have implemented a ray tracing pipeline which supports both primitive (spheres and triangles) and mesh-based scenes. The code is implemented such that we can construct multiple scenes of varying complexity including small scenes like random 100 spheres and dataset such as Standford bunny and dragon. We also implemented a correctness validation pipeline using a feature flag “check” which helps compare based on PPM and ensure consistency so that we can validate if our parallel implementation are correct are not.</p>
+        <p>On top of the renderer, we have implemented a sequential BVH construction as well as traversal. This we completed using top down mid split recursive apporach to build the tree. As this is slow for big scenes like dragon, we started our parallel implementations. We have implemented OpenMP-based BVH constructions using task parallelism for recursion (left and right). We also implemented an optimized top-down BVH construction using a range based (start,end) representation for the BVH tree. This was to eliminate the vector copying happening every recursion.</p>
+      </section>
+
+      <section id="progress">
+        <div class="section-title">Progress Toward Goals & Updated Deliverables</div>
+        <p>Our primary goal is to explore and evaulate different parallelization strategies for BVH construction and understand the scabilitity limitations and try identifying more parallel friendly base construction.</p>
+        <p>We are currently on track with respect to our deliverables as our main goal was to get the base ray tracing and correctness validation done properly so we can use it for our parallelization strategies. As all of this is done, we have begun implementing multiple parallelization strategies using CPU and GPU with optimizations as we discover new observations.</p>
+        <p>As we didnt mention properly in our original proposal report, our main focus is to discover how we can parallelize bvh construction and use multiple strategies taught to us in class, analyze them, and finally optimize it.</p>
+        <p>We still believe we will be able to deliver all our deliverables (which we updated on our website according to feedback). However, based on our early results, we decided to refine our approach for a staged exploration of BVH parallelization.</p>
+      </section>
+
+      <section id="updated-goals">
+        <div class="section-title">Updated Goals</div>
+        <ul>
+          <li>Sequential ray tracer and BVH baseline</li>
+          <li>Naive OpenMP BVH construction</li>
+          <li>Optimized range-based OpenMP BVH constuction</li>
+          <li>Evaluate task-based parallel BVH construction (which is our current approach)</li>
+          <li>Explore task granularity tuning (threshold-based task spawning, still need to explore)</li>
+          <li>Analyze scaling behavior vs scene size and thread count</li>
+          <li>Compare coarse-grained vs fine-grained parallelism strategies</li>
+          <li>Measure impact of parallel overhead</li>
+          <li>Implement CPU traversal parallelization too</li>
+          <li>Evaluate independent ray parallelism vs BVH construction parallelism</li>
+          <li>Explore alternative BVH construction strategies (e.g., LBVH) (this is important for us as this might help us achieve much bettter parallelization)</li>
+          <li>Comparing original BVH vs parallel-friendly linear BVH approaches</li>
+          <li>Implement GPU-based BVH traversal and/or construction (CUDA)</li>
+          <li>Also implementing GPU-based for new alternative strategy</li>
+          <li>Evaluate GPU performance factors such as warp divergence and memory behavior</li>
+          <li>Perform comprehensive performance analysis comparing all of the tried strategies and understanding the tradeoffs.</li>
+        </ul>
+      </section>
+
+      <section id="nice-to-haves">
+        <div class="section-title">Nice to haves</div>
+        <ul>
+          <li>SIMD optimizations for traversal</li>
+          <li>Improved memory layout for better cache locality</li>
+          <li>Advanced GPU optimizations like reducing divergence, improving memory coalescing</li>
+          <li>Hybrid CPU-GPU strategy for BVH construction plus traversal (if our implementations are complimentary to each other, we will try combining them into a hybrid approach)</li>
+        </ul>
+      </section>
+
+      <section id="updated-schedule">
+        <div class="section-title">Updated Schedule</div>
+
+        <div class="schedule-grid">
+          <div class="schedule-row">
+            <div class="schedule-week">Week 1</div>
+            <div class="schedule-desc">Read research papers as well as any other relevant material on ray tracing and BVHs. Also understand how to implement sequential BVH construction and traversal. Then understand and check parallelization strategies for CPU and GPU. Finally, create a design with pseudocode.</div>
+            <div class="schedule-status">Completed</div>
+          </div>
+
+          <div class="schedule-row">
+            <div class="schedule-week">Week 2</div>
+            <div class="schedule-desc">Implement and test baseline including ray tracing and BVH construction/traversal. Also add test scenes of varying complexity and validate correctness against brute-force.</div>
+            <div class="schedule-status">Completed</div>
+          </div>
+
+          <div class="schedule-row">
+            <div class="schedule-week">Week 3</div>
+            <div class="schedule-desc">Implemented naive OpenMP to build BVH and improved range-based BVH. Tested CPU parallelization (task-based recursion, granularity, load balancing) and gathered some early performance data.</div>
+            <div class="schedule-status">In-progress</div>
+          </div>
+
+          <div class="schedule-row">
+            <div class="schedule-week">Week 4</div>
+            <div class="schedule-desc">Explore improved parallelization strategies for BVH construction, including better task granularity, alternative splitting approaches, and LBVH (Morton-code-based construction). Begin GPU implementation aligned with these strategies.</div>
+            <div class="schedule-status">In-progress</div>
+          </div>
+
+          <div class="schedule-row">
+            <div class="schedule-week">Week 5</div>
+            <div class="schedule-desc">Finalize CPU and GPU parallelization implementation and also try to implement nice to haves. We will then collect benchmark results, analyze tradeoffs and then work on the final report and demo.</div>
+            <div class="schedule-status">Planned</div>
+          </div>
+        </div>
+      </section>
+
+      <section id="poster-session-plan">
+        <div class="section-title">Poster Session Plan</div>
+        <p>At the poster session plan we are planning to present both virtual and performance-based results.</p>
+        <ul>
+          <li>Rendered outputs of scenes like Stanford Bunny, Dragon, etc...</li>
+          <li>Comparsion between different parallelization strategies</li>
+          <li>Graphs showing BVH build time vs thread count, speedup, comparsion of different strategies</li>
+          <li>Discussion of limitations like scalability and optimization strategies</li>
+        </ul>
+      </section>
+
+      <section id="preliminary-results">
+        <div class="section-title">Preliminary Results</div>
+        <p>As we have already implemented two basic parallelization strategies for our bvh, we have these results, the BVH construction timings are as follows:</p>
+        <p class="small-note">(All are for 800x450 resolution)</p>
+
+        <div class="subheading">Dragon[1] (870k Triangles)</div>
+        <table>
+          <thead>
+            <tr>
+              <th>Threads</th>
+              <th>Naive OMP (ms)</th>
+              <th>Optimized OMP (ms)</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr><td>1</td><td>43453</td><td>43139</td></tr>
+            <tr><td>2</td><td>24322</td><td>24019</td></tr>
+            <tr><td>4</td><td>15610</td><td>15485</td></tr>
+            <tr><td>8</td><td>11734</td><td>11524</td></tr>
+          </tbody>
+        </table>
+
+        <p style="margin-top:14px;">Speedup was:</p>
+        <ul>
+          <li>Naive: 3.72x for 8 threads</li>
+          <li>Optimized task based: 3.75x for 8 threads</li>
+        </ul>
+
+        <div class="subheading">Standford bunny[2] (70k Triangles)</div>
+        <table>
+          <thead>
+            <tr>
+              <th>Threads</th>
+              <th>Naive OMP (ms)</th>
+              <th>Optimized OMP (ms)</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr><td>1</td><td>2499</td><td>2486</td></tr>
+            <tr><td>2</td><td>1419</td><td>1409</td></tr>
+            <tr><td>4</td><td>937</td><td>938</td></tr>
+            <tr><td>8</td><td>803</td><td>798</td></tr>
+          </tbody>
+        </table>
+
+        <p style="margin-top:14px;">Speedup was 3.1x for 8 threads.</p>
+      </section>
+
+      <section id="observations">
+        <div class="section-title">Observations</div>
+        <ul>
+          <li>Parallelization does give us clear speedup but scaling is sublinear</li>
+          <li>Efficiency decreases as thread count increases too indicating a bottleneck</li>
+          <li>Optimized range-based BVH reduces memory overhead but doesn’t provide much improvement as our main problem for scaling is due to limited parallelization</li>
+          <li>Performance is dominated by recursive sorting cost, task overhead and limited parallelism at top levels of the bvh tree</li>
+          <li>This indicates that naive parallelization alone is insufficient.</li>
+        </ul>
+      </section>
+
+      <section id="challenges">
+        <div class="section-title">Challenges & Open Issues</div>
+        <p>The main challenge we have encountered is efficient parallelization of BVH construction. While our intial implementations improve performance, scaling is limited as:</p>
+        <ul>
+          <li>Task creation overhead</li>
+          <li>Sequential sorting</li>
+          <li>Load imbalance across subtress</li>
+          <li>Memory and cache inefficiency</li>
+        </ul>
+        <p>We can implement optimized BVH construction by checking other strategies to build it such as LBVH so sequential part of the tree can be parallelized. But right now, we know the bottleneck is more algorithmic than purely implementation based.</p>
+        <p>At this point there are no major problems which are blocking our progress, and remaining work primarily involves trying different strategies for parallelization as well as efficient construction strategies for BVH. Then evaluating and understanding the tradeoffs.</p>
+      </section>
+
+      <section id="summary">
+        <div class="section-title">Summary</div>
+        <p>We have successfully completed the baseline implementation and multiple BVH construction strategies. Our initial results are showing speedups as well as limitations of naive parallelization. These results then motivate further exploration of different improved algorithms like LBVH and other parallelization strategies as well as GPU based implementation. The project is progressing according to the plan and we are well on track to complete all remaining deliverables.</p>
+      </section>
+
+      <section id="datasets">
+  <div class="section-title">Datasets</div>
+
+  <div class="subheading">[1] Stanford Bunny</div>
+  <p>
+    Source: Stanford University Computer Graphics Laboratory<br>
+    Link: https://graphics.stanford.edu/data/3Dscanrep/<br>
+    Scanner: Cyberware 3030 MS<br>
+    Number of scans: 10<br>
+    Total size of scans: 362,272 points (about 725,000 triangles)<br>
+    Reconstruction: zipper<br>
+    Size of reconstruction: 35947 vertices, 69451 triangles<br>
+    Comments: contains 5 holes in the bottom
+  </p>
+
+  <div class="subheading">[2] Stanford Dragon</div>
+  <p>
+    Source: Stanford University Computer Graphics Laboratory<br>
+    Scanner: Cyberware 3030 MS + spacetime analysis<br>
+    Number of scans: ~70<br>
+    Link: https://graphics.stanford.edu/data/3Dscanrep/<br>
+    Total size of scans: 2,748,318 points (about 5,500,000 triangles)<br>
+    Reconstruction: vrip (conservatively decimated)<br>
+    Size of reconstruction: 566,098 vertices, 1,132,830 triangles<br>
+    Comments: contains numerous small holes
+  </p>
+
+  
+</section>
+
+    </div>
+  </main>
+
+  <footer>
+    <div class="container">
+      Soham Narendra Joshi · Viren Dodia · Milestone page based on your milestone report
+    </div>
+  </footer>
+</body>
+</html>
