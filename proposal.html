@@ -58,6 +58,12 @@
     }
     .nav-links a{opacity:.82}
     .nav-links a:hover{opacity:1;color:var(--green)}
+    .nav-links a.nav-external::after{
+      content:"↗";
+      font-size:11px;
+      margin-left:4px;
+      opacity:.65;
+    }
 
     .hero{
       padding:58px 0 34px;
@@ -216,13 +222,8 @@
         <div class="brand">15-618 Project Proposal</div>
         <div class="nav-links">
           <a href="index.html">Home</a>
-          <a href="#summary">Summary</a>
-          <a href="#background">Background</a>
-          <a href="#challenges">Challenges</a>
-          <a href="#resources">Resources</a>
-          <a href="#goals">Goals</a>
-          <a href="#schedule">Schedule</a>
-          <a href="#references">References</a>
+          <a href="final-report.html">Final Report</a>
+          <a class="nav-external" href="https://github.com/SohamJoshi/BVH_raytracer" target="_blank" rel="noopener noreferrer">Code</a>
         </div>
       </nav>
     </div>
